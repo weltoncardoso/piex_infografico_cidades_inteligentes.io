@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIEX III - Cidades Inteligentes e IA na Mobilidade Urbana</title>
+  <style>
+    :root {
+      --primary-color: #0A5C47;
+      --primary-hover: #084938;
+      --primary-light: #E6F4F0;
+      --primary-dark: #053327;
+      --text-main: #1F2937;
+      --text-muted: #4B5563;
+      --text-light: #9CA3AF;
+      --bg-main: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --border-color: #E5E7EB;
+      --ods11-color: #FD9D24;
+      --ods11-bg: #FFF8EE;
+      --ods11-border: #FCD399;
+      --ods11-text: #8C4E03;
+      --ods9-color: #F36D25;
+      --ods9-bg: #FFF3EB;
+      --ods9-border: #FDBA8C;
+      --ods9-text: #963507;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-color: #10B981;
+        --primary-hover: #059669;
+        --primary-light: #064E3B;
+        --primary-dark: #022C22;
+        --text-main: #F3F4F6;
+        --text-muted: #D1D5DB;
+        --text-light: #9CA3AF;
+        --bg-main: #111827;
+        --bg-card: #1F2937;
+        --border-color: #374151;
+        --ods11-color: #FBBF24;
+        --ods11-bg: #452605;
+        --ods11-border: #783F04;
+        --ods11-text: #FDE68A;
+        --ods9-color: #FB923C;
+        --ods9-bg: #431407;
+        --ods9-border: #7C2D12;
+        --ods9-text: #FFEDD5;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .ig-container {
+      width: 100%;
+      max-width: 860px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: var(--bg-main);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Header */
+    .ig-header {
+      background: linear-gradient(135deg, #0A5C47 0%, #0F3D30 100%);
+      padding: 30px 24px 24px;
+      text-align: center;
+      color: #FFFFFF;
+    }
+
+    .ig-badge-top {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: #A7F3D0;
+    }
+
+    .ig-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.3;
+    }
+
+    .ig-sub {
+      font-size: 14px;
+      color: #D1FAE5;
+      margin-top: 6px;
+      font-weight: 400;
+    }
+
+    .ig-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .b-ods {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .b11 {
+      background: #FD9D24;
+      color: #452102;
+    }
+
+    .b9 {
+      background: #F36D25;
+      color: #3F1102;
+    }
+
+    /* Sections */
+    .sec {
+      padding: 24px 24px 16px;
+    }
+
+    .sec-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sec-tag {
+      font-size: 10px;
+      background: var(--bg-card);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Stat Cards */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 18px 16px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-n {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--primary-color);
+      line-height: 1;
+    }
+
+    .stat-l {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
+
+    .div-line {
+      height: 1px;
+      background: var(--border-color);
+      margin: 8px 24px;
+    }
+
+    /* Solution Items */
+    .sol-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sol-item {
+      display: flex;
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .sol-item:hover {
+      border-color: var(--primary-color);
+    }
+
+    .sol-bar {
+      width: 6px;
+      background: var(--primary-color);
+      flex-shrink: 0;
+    }
+
+    .sol-body {
+      padding: 14px 16px;
+      flex: 1;
+    }
+
+    .sol-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .sol-t {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .sol-pill {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary-color);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .sol-d {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Interactive Simulation Box */
+    .sim-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 14px;
+    }
+
+    .sim-header {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sim-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .sim-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sim-btn.active {
+      background: var(--primary-color);
+      color: #FFFFFF;
+      border-color: var(--primary-color);
+    }
+
+    .sim-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      background: var(--bg-main);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .sim-res-item {
+      text-align: center;
+    }
+
+    .sim-res-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .sim-res-lbl {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    /* ODS Row */
+    .ods-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .ods-card {
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid transparent;
+    }
+
+    .ods-c11 {
+      background: var(--ods11-bg);
+      border-color: var(--ods11-border);
+    }
+
+    .ods-c9 {
+      background: var(--ods9-bg);
+      border-color: var(--ods9-border);
+    }
+
+    .ods-num {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .ods-c11 .ods-num {
+      color: var(--ods11-text);
+    }
+
+    .ods-c9 .ods-num {
+      color: var(--ods9-text);
+    }
+
+    .ods-ttl {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+
+    .ods-c11 .ods-ttl {
+      color: var(--ods11-text);
+    }
+
+    .ods-c9 .ods-ttl {
+      color: var(--ods9-text);
+    }
+
+    .ods-metas {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ods-m {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .ods-m:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .m-n {
+      flex-shrink: 0;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Footer */
+    .ig-footer {
+      background: var(--bg-card);
+      text-align: center;
+      padding: 16px;
+      font-size: 11px;
+      color: var(--text-light);
+      border-top: 1px solid var(--border-color);
+      line-height: 1.6;
+    }
+
+    .ig-footer strong {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ig-container">
+    <!-- Header -->
+    <div class="ig-header">
+      <div class="ig-badge-top">Projeto Integrado de Extensão III</div>
+      <div class="ig-title">Cidades Inteligentes e Inteligência Artificial</div>
+      <div class="ig-sub">Ciência de Dados e Machine Learning na Gestão da Mobilidade Urbana e Sustentabilidade</div>
+      <div class="ig-badges">
+        <span class="b-ods b11">ODS 11 · Cidades e Comunidades Sustentáveis</span>
+        <span class="b-ods b9">ODS 9 · Indústria, Inovação e Infraestrutura</span>
+      </div>
+    </div>
+
+    <!-- Panorama do Problema -->
+    <div class="sec">
+      <div class="sec-lbl">
+        <span>O Diagnóstico da Mobilidade Urbana no Brasil</span>
+        <span class="sec-tag">Dados Secundários Oficiais</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-n">84%</div>
+          <div class="stat-l">da população brasileira vive em centros urbanos (IBGE, Censo 2022)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n">R$ 110 bi</div>
+          <div class="stat-l">perdidos anualmente em produtividade por congestionamentos (IPEA, 2023)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n">160 mi</div>
+          <div class="stat-l">de viagens urbanas diárias em cidades com mais de 60 mil hab. (ANTP)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div-line"></div>
+
+    <!-- Soluções por IA e Ciência de Dados -->
+    <div class="sec">
+      <div class="sec-lbl">
+        <span>Soluções com Ciência de Dados e Inteligência Artificial</span>
+        <span class="sec-tag">Arquitetura Tecnológica</span>
+      </div>
+      <div class="sol-list">
+        <div class="sol-item">
+          <div class="sol-bar"></div>
+          <div class="sol-body">
+            <div class="sol-header-line">
+              <div class="sol-t">1. Semáforos Adaptativos Inteligentes (Deep RL)</div>
+              <span class="sol-pill">Tempo Real</span>
+            </div>
+            <div class="sol-d">Algoritmos de Aprendizado por Reforço Profundo ajustam dinamicamente a temporização dos
+              sinais a partir da densidade veicular em tempo real, reduzindo o tempo de espera em até 35% e diminuindo
+              emissões em marcha lenta (Kiani et al., 2021).</div>
+          </div>
+        </div>
+
+        <div class="sol-item">
+          <div class="sol-bar"></div>
+          <div class="sol-body">
+            <div class="sol-header-line">
+              <div class="sol-t">2. Previsão de Demanda e Otimização de Frotas (LSTM / Transformers)</div>
+              <span class="sol-pill">Preditivo</span>
+            </div>
+            <div class="sol-d">Modelagem preditiva de séries temporais calibra as tabelas horárias e rotas do transporte
+              público conforme clima, eventos e histórico, reduzindo o consumo de diesel em até 18% e mitigando a
+              superlotação (WRI Brasil, 2022).</div>
+          </div>
+        </div>
+
+        <div class="sol-item">
+          <div class="sol-bar"></div>
+          <div class="sol-body">
+            <div class="sol-header-line">
+              <div class="sol-t">3. Detecção de Incidentes por Visão Computacional (YOLO / CNNs)</div>
+              <span class="sol-pill">Segurança</span>
+            </div>
+            <div class="sol-d">Processamento contínuo de câmeras de monitoramento viário identifica automaticamente
+              sinistros, obstruções e pedestres em risco em segundos, acelerando o socorro e a desobstrução das vias.
+            </div>
+          </div>
+        </div>
+
+        <div class="sol-item">
+          <div class="sol-bar"></div>
+          <div class="sol-body">
+            <div class="sol-header-line">
+              <div class="sol-t">4. Roteirização Sustentável de Frotas Municipais e Logística Urbana</div>
+              <span class="sol-pill">Logística Verde</span>
+            </div>
+            <div class="sol-d">Otimização combinatória com algoritmos genéticos e ML para frotas de limpeza urbana,
+              coleta seletiva e entregas de última milha (*last mile*), minimizando quilometragem rodada e consumo
+              energético.</div>
+          </div>
+        </div>
+
+        <div class="sol-item">
+          <div class="sol-bar"></div>
+          <div class="sol-body">
+            <div class="sol-header-line">
+              <div class="sol-t">5. Monitoramento Espacial de Emissões e Qualidade do Ar (IoT + ML)</div>
+              <span class="sol-pill">Sustentabilidade</span>
+            </div>
+            <div class="sol-d">Interpolação espacial e modelagem preditiva integram sensores ambientais e fluxo de
+              tráfego para subsidiar Zonas de Baixas Emissões (*Low Emission Zones*) e intervenções urbanas de saúde
+              pública.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulação Interativa -->
+      <div class="sim-box">
+        <div class="sim-header">
+          <span> <strong>Simulador de Impacto:</strong> Selecione o Modelo de Intervenção de IA</span>
+        </div>
+        <div class="sim-controls">
+          <button class="sim-btn active" onclick="updateSim('semaforos', this)">Semáforos Adaptativos (DQN)</button>
+          <button class="sim-btn" onclick="updateSim('frota', this)">Otimização de Frotas (LSTM)</button>
+          <button class="sim-btn" onclick="updateSim('integrado', this)">Gestão Integrada (Smart City)</button>
+        </div>
+        <div class="sim-results">
+          <div class="sim-res-item">
+            <div class="sim-res-val" id="res-tempo">-28%</div>
+            <div class="sim-res-lbl">Tempo de Viagem / Fila</div>
+          </div>
+          <div class="sim-res-item">
+            <div class="sim-res-val" id="res-combustivel">-22%</div>
+            <div class="sim-res-lbl">Consumo de Combustível</div>
+          </div>
+          <div class="sim-res-item">
+            <div class="sim-res-val" id="res-co2">-19%</div>
+            <div class="sim-res-lbl">Emissões de CO2 Estimadas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div-line"></div>
+
+    <!-- Alinhamento com ODS -->
+    <div class="sec">
+      <div class="sec-lbl">
+        <span>Alinhamento Estratégico com os ODS (Agenda 2030)</span>
+        <span class="sec-tag">ONU & Metas</span>
+      </div>
+      <div class="ods-row">
+        <div class="ods-card ods-c11">
+          <div class="ods-num">ODS 11</div>
+          <div class="ods-ttl">Cidades e Comunidades Sustentáveis</div>
+          <div class="ods-metas">
+            <div class="ods-m"><span class="m-n">11.2</span><span>Transporte público seguro, acessível, sustentável e
+                pontual para todos.</span></div>
+            <div class="ods-m"><span class="m-n">11.6</span><span>Reduzir o impacto ambiental negativo das cidades e
+                melhorar a qualidade do ar.</span></div>
+            <div class="ods-m"><span class="m-n">11.7</span><span>Proporcionar acesso universal a espaços públicos
+                seguros, inclusivos e verdes.</span></div>
+          </div>
+        </div>
+
+        <div class="ods-card ods-c9">
+          <div class="ods-num">ODS 9</div>
+          <div class="ods-ttl">Indústria, Inovação e Infraestrutura</div>
+          <div class="ods-metas">
+            <div class="ods-m"><span class="m-n">9.4</span><span>Modernizar a infraestrutura urbana com tecnologias
+                limpas e eficiência energética.</span></div>
+            <div class="ods-m"><span class="m-n">9.5</span><span>Fortalecer a pesquisa científica, desenvolvimento e
+                inovação tecnológica nacional.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="ig-footer">
+      <strong>PIEX III · Projeto Integrado de Extensão</strong><br>
+      Centro Universitário UniDomBosco <br>
+      Curso de Ciência de Dados e Inteligência Artificial · 2026<br>
+      Aluno: <strong>Welton Viana Cardoso</strong> (RA: 25202075)<br>
+      Tutores: <strong>Prof.ª Ma. Adriana Franzoi Wagner e Prof. Rodrigo Fernandes Pissetti</strong>
+    </div>
+  </div>
+
+  <script>
+    const simData = {
+      semaforos: { tempo: '-28%', combustivel: '-22%', co2: '-19%' },
+      frota: { tempo: '-18%', combustivel: '-24%', co2: '-21%' },
+      integrado: { tempo: '-35%', combustivel: '-31%', co2: '-28%' }
+    };
+
+    function updateSim(type, btn) {
+      document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('res-tempo').textContent = simData[type].tempo;
+      document.getElementById('res-combustivel').textContent = simData[type].combustivel;
+      document.getElementById('res-co2').textContent = simData[type].co2;
+    }
+  </script>
+
+</body>
+
+</html>
